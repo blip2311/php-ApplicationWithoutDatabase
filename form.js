@@ -1,14 +1,14 @@
 let loadNewForm = () =>{
-    createFormPage(null);
+    createFormPage(null,true);
 };
 
-let createFormPage = item =>{
+let createFormPage = (item, edit) =>{
     let main = document.createElement("main");
-    main.appendChild(createForm());
+    main.appendChild(createForm(item, edit));
     document.querySelector("body").replaceChildren(main);
 };
 
-let createForm = item =>{
+let createForm = (item, edit) =>{
     let form = document.createElement("form");
     form.id = "ItemForm";
     form.appendChild( createFieldSet({
@@ -22,14 +22,21 @@ let createForm = item =>{
         input:"input",
         type:"text",
         name:"name",
-        disabled:false, 
+        disabled:!edit, 
         value:(item==null)?"":item.name
     }))
     form.appendChild(createFieldSet({
         input:"input",
         type:"file",
         name:"image",
-        disabled:false, 
+        disabled:!edit, 
+        value:(item==null)?"":item.image
+    }))
+    form.appendChild(createFieldSet({
+        input:"textarea",
+        type:null,
+        name:"address",
+        disabled:!edit, 
         value:(item==null)?"":item.image
     }))
     return form;
