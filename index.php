@@ -1,5 +1,14 @@
 <?php
 session_start();
 spl_autoload_register(function($className){
-    include $class_name . '.php';
+    include $className . '.php';
 });
+if(!isset($_SESSION["items"])){
+    $_SESSION["items"] = array();
+}
+try{
+    echo Router::getResponse();
+}catch(Exception $e){
+    http_response_code($e->getCode());
+    echo $e->getMessage();
+}
