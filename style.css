@@ -1,7 +1,7 @@
   * {
     margin: 0;
     padding: 0;
-    font-family: sans;
+    font-family: arial,sans;
   }
   table {
     border-collapse: collapse;
@@ -15,3 +15,13 @@
     padding: 1em;
     border: 1px solid #247ecc;
   }
+  button {
+    padding: 10px;
+    margin: 20px;
+    background: #247ecc;
+    color: #e1e1e1;
+    border: #247ecc;
+    border-radius: 5px;
+    font-size: 1em;
+  }
+  

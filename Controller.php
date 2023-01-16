@@ -28,9 +28,12 @@ class Controller{
 
     //Returns the default page to be opened when site is opened.
     public function home(){
-        return "<html>
+        return "   <!doctype html> 
+        <html>
             <head>
                 <script src='script.js'></script>
+                <script src='list.js'></script>
+                <script src='form.js'></script>
                 <link href='style.css' rel='stylesheet'>
             </head>
             <body onload='pageLoaded()'></body>
