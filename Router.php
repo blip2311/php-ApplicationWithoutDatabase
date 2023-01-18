@@ -62,9 +62,9 @@ class Router{
     //Finds and returns the model for the given id. If no model is found then an exception is thrown.
     private function getModel(int $id):Model{
         foreach($_SESSION["items"] as $model){
-            var_dump($_SESSION["items"],"<br>", unserialize($model),"<br>", unserialize($model)->id,"<br>", $id);
-            if($model->id == $id){
-                return $model;
+            $m = unserialize($model);
+            if($m->id == $id){
+                return $m;
             }
         }
         throw new Exception("Item with id $id is not found", 404);

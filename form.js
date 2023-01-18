@@ -78,6 +78,7 @@ async function saveButtonClicked (e){
     if(!response.ok){
         console.error(response.text());
     }
+    loadList();
 };
 
 let cancelButtonClicked = e =>{
@@ -124,11 +125,12 @@ let createFieldSet = data =>{
             fieldset.appendChild(image);
             input.addEventListener("change", imageSelectionChanged);
             input.accept = "image/*";
+        }else{
+            input.value = data.value;
         }
         input.id = id;
         input.name = id.toLowerCase();
-        input.value = data.value;
-        if(data.disabled){
+         if(data.disabled){
             input.disabled = "disabled";
         }
         fieldset.appendChild(input);

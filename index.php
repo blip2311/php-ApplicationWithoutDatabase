@@ -5,7 +5,11 @@ spl_autoload_register(function($className){
     include $className . '.php';
 });
 if(!isset($_SESSION["items"])){
-    $_SESSION["items"] = array();
+    if(is_file("data")){
+    $_SESSION["items"] = unserialize(file_get_contents("data"));
+    }else{
+        $_SESSION["items"] = array();
+    }
 }
 try{
     echo Router::getResponse();

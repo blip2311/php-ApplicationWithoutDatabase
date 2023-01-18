@@ -52,3 +52,6 @@
   #Preview {
     width: 100px;
   }
+  td > img{
+    width: 80px;
+  }

@@ -105,10 +105,18 @@ let viewButtonClicked = e =>{
         }
       })
       .then(response =>response.json())
-      .then(jsonData => createForm(jsonData, false));
+      .then(jsonData => createFormPage(jsonData, false));
 };
 
-let deleteButtonClicked = e =>{};
+let deleteButtonClicked = async e =>{
+    let response = await fetch(e.currentTarget.dataset.url, {
+        method:"POST",
+    });
+    if(!response.ok){
+        console.error(response.text());
+    }
+    loadList();
+};
 
 let getImageData = url =>{
     let td = document.createElement("td");

@@ -12,28 +12,27 @@ class Controller{
 
     //Returns the JSON representation of the model given as parameter with edit disabled.
     public function showModel(Model $model){
-        return "inside showModel";
+        return json_encode($model);
     }
 
     //Returns the JSON representation of the model given as parameter with edit enabled.
     public function editModel(Model $model){
-        return "inside editModel";
+        return json_encode($model);
     }
 
-    //Saves a new Model and returns the updated list of models
+    //Saves a new Model 
     public function saveModel(){
-        // var_dump($_POST, $_FILES["image"]);
         return $this->store(new Model());
-        // return "inside saveModel";
     }
 
-    //Updates the model given as parameter and returns the updated list of models
+    //Updates the model given as parameter
     public function updateModel(Model $model){
-        return "inside updateModel";
+        return $this->store($model);
     }
 
+    //Delete the model given as parameter
     public function deleteModel(Model $model){
-        return "inside deleteModel";
+        return $this->delete($model);
     }
 
     //Returns the default page to be opened when site is opened.
@@ -50,31 +49,69 @@ class Controller{
         </html>";
     }
 
+    private function delete(Model $model){
+        if(isset($model->image) && file_exists($model->image)){
+            unlink($model->image);
+        }
+        foreach($_SESSION["items"] as $i => $itm){
+            $item = unserialize($itm);
+            if($item->id == $model->id){
+                unset($_SESSION["items"][$i]);
+                break;
+            }
+        }
+        $this->storeData();
+        return "success";
+    }
+
     private function store(Model $model){
+        if(!isset($model->id)){
+            $model->id = $this->getNextId();
+        }
+        if(is_dir("images") === false){
+            mkdir("images");
+        }
         if(isset($_FILES["image"])){
             if(isset($model->image) && file_exists($model->image)){
                 unlink($model->image);
             }
             $file_tmp =$_FILES['image']['tmp_name'];
-            $file_real = "images/".$_FILES['image']['name'];
-            move_uploaded_file($file_tmp, $file_real);
+            $file_ext = end(explode(".", $_FILES['image']['name']));
+            $file_real =  "images/".$model->id.".".$file_ext;
+            move_uploaded_file($file_tmp,$file_real);
             $model->image = $file_real;
         }
         $model->name = $_POST["name"];
         $model->address = $_POST["address"];
         $model->gender = $_POST["gender"];
-        if(!isset($model->id)){
-            $model->id = $this->getNextId();
+        $found = false;
+        foreach($_SESSION["items"] as $i => $itm){
+            $item = unserialize($itm);
+            if($item->id == $model->id){
+                $_SESSION["items"][$i] = serialize($model);
+                $found = true;
+                break;
+            }
+        }
+        if(!$found){
             $_SESSION["items"][] = serialize($model);
         }
+        $this->storeData();
         return "success";
+    }
+
+    private function storeData(){
+        $file = fopen("data", "w");
+        fwrite($file, serialize($_SESSION["items"]));
+        fclose($file);
     }
 
     private function getNextId():int{
         $i = 0;
         foreach($_SESSION["items"] as $item){
-            if(unserialize($item)->id > $i){
-                $i = $item->id;
+            $it = unserialize($item);
+            if($it->id > $i){
+                $i = $it->id;
             }
         }
         return $i+1;
