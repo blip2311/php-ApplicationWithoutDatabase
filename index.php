@@ -1,6 +1,5 @@
 <?php
 session_start();
-// session_destroy();
 spl_autoload_register(function($className){
     include $className . '.php';
 });
