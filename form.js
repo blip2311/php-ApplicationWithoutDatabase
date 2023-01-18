@@ -10,6 +10,7 @@ let createFormPage = (item, edit) =>{
 
 let createForm = (item, edit) =>{
     let form = document.createElement("form");
+    form.action = (item == null)?"save":"update/"+item.id;
     form.id = "ItemForm";
     form.appendChild( createFieldSet({
         input:"input",
@@ -45,9 +46,43 @@ let createForm = (item, edit) =>{
         name:"gender",
         options:["male","female"],
         disabled:!edit, 
-        value:(item==null)?"":item.address
+        value:(item==null)?"":item.gender
     }));
+    form.appendChild(createButtonDiv(edit));
     return form;
+};
+
+let createButtonDiv = edit =>{
+    let p = document.createElement("p");
+    p.id = "ButtonSection"
+    if(edit){
+        let saveButton = document.createElement("button");
+        saveButton.innerText = "SAVE";
+        p.appendChild(saveButton);
+        saveButton.addEventListener("click", saveButtonClicked);
+    }
+    let cancelButton = document.createElement("button");
+    p.appendChild(cancelButton);
+    cancelButton.innerText = (edit)?"CANCEL":"BACK";
+    cancelButton.addEventListener("click", cancelButtonClicked);
+    return p;
+};
+
+async function saveButtonClicked (e){
+    e.preventDefault();
+    let formData = new FormData(ItemForm);
+    let response = await fetch(ItemForm.action, {
+        method:"POST",
+        body:formData
+    });
+    if(!response.ok){
+        console.error(response.text());
+    }
+};
+
+let cancelButtonClicked = e =>{
+    e.preventDefault();
+    loadList();
 };
 
 let createFieldSet = data =>{
@@ -79,6 +114,17 @@ let createFieldSet = data =>{
         if(data.type!=null){
             input.type = data.type;
         }
+        if(id == "IMAGE"){
+            let image = document.createElement("img");
+            image.id = "Preview";
+            image.alt = "No Image Selected";
+            if(data.value !== null){
+                image.src = data.value;
+            }
+            fieldset.appendChild(image);
+            input.addEventListener("change", imageSelectionChanged);
+            input.accept = "image/*";
+        }
         input.id = id;
         input.name = id.toLowerCase();
         input.value = data.value;
@@ -88,4 +134,14 @@ let createFieldSet = data =>{
         fieldset.appendChild(input);
     }
     return fieldset;
-}
+};
+
+let imageSelectionChanged = e =>{
+    let file = e.currentTarget.files[0];
+    let image = document.querySelector("#Preview");
+    let reader = new FileReader();
+    reader.onload = e =>{
+        image.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+};

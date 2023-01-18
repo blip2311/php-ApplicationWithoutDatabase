@@ -24,4 +24,31 @@
     border-radius: 5px;
     font-size: 1em;
   }
-  
+  fieldset {
+    border: none;
+    margin-top: 1em;
+    padding: 5px 1em;
+  }
+  #ItemForm {
+    width: 30%;
+    margin: 10px auto;
+    border: 1px solid #247ecc;
+    border-radius: 10px;
+    background: #f1f1f1;
+    box-shadow: 0 0 10px #247ecc;
+  }
+  #ButtonSection {
+    text-align: center;
+  }
+  input:not([type="radio"]), textarea {
+    width: 100%;
+  }
+  input[type="radio"]{
+    margin-right: 10px;
+  }
+  legend {
+    color: #247ecc;
+  }
+  #Preview {
+    width: 100px;
+  }

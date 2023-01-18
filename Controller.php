@@ -3,7 +3,7 @@ class Controller{
 
     //Returns the list of models
     public function getModelList(){
-        return json_encode([]);
+        return json_encode($_SESSION["items"]);
     }
 
     //Returns the JSON representation of the model given as parameter with edit disabled.
@@ -18,7 +18,9 @@ class Controller{
 
     //Saves a new Model and returns the updated list of models
     public function saveModel(){
-        return "inside saveModel";
+        // var_dump($_POST, $_FILES["image"]);
+        return $this->store(new Model());
+        // return "inside saveModel";
     }
 
     //Updates the model given as parameter and returns the updated list of models
@@ -38,5 +40,35 @@ class Controller{
             </head>
             <body onload='pageLoaded()'></body>
         </html>";
+    }
+
+    private function store(Model $model){
+        if(isset($_FILES["image"])){
+            if(isset($model->image) && file_exists("./".$model->image)){
+                unlink("./".$model->image);
+            }
+            $file_tmp =$_FILES['image']['tmp_name'];
+            $file_real = "images/".$_FILES['image']['name'];
+            move_uploaded_file($file_tmp, $file_real);
+            $model->image = $file_real;
+        }
+        $model->name = $_POST["name"];
+        $model->address = $_POST["address"];
+        $model->gender = $_POST["gender"];
+        if(!isset($model->id)){
+            $model->id = $this->getNextId();
+            $_SESSION["items"][] = $model;
+        }
+        return "success";
+    }
+
+    private function getNextId():int{
+        $i = 0;
+        foreach($_SESSION["items"] as $item){
+            if($item->id > $i){
+                $i = $item->id;
+            }
+        }
+        return $i+1;
     }
 }
