@@ -35,6 +35,10 @@ class Router{
                 $router->checkPost();
                 $router->checkModel($model);
                 return $controller->updateModel($model);
+            case "delete":
+                $router->checkPost();
+                $router->checkModel($model);
+                return $controller->deleteModel($model);
             default:
                 $router->checkGet();
                 return $controller->home();
@@ -58,6 +62,7 @@ class Router{
     //Finds and returns the model for the given id. If no model is found then an exception is thrown.
     private function getModel(int $id):Model{
         foreach($_SESSION["items"] as $model){
+            var_dump($_SESSION["items"],"<br>", unserialize($model),"<br>", unserialize($model)->id,"<br>", $id);
             if($model->id == $id){
                 return $model;
             }

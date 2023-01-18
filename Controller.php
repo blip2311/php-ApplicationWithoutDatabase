@@ -3,7 +3,11 @@ class Controller{
 
     //Returns the list of models
     public function getModelList(){
-        return json_encode($_SESSION["items"]);
+        $returnArray = array();
+        foreach($_SESSION["items"] as $item){
+            $returnArray[] = unserialize($item);
+        }
+        return json_encode($returnArray);
     }
 
     //Returns the JSON representation of the model given as parameter with edit disabled.
@@ -28,6 +32,10 @@ class Controller{
         return "inside updateModel";
     }
 
+    public function deleteModel(Model $model){
+        return "inside deleteModel";
+    }
+
     //Returns the default page to be opened when site is opened.
     public function home(){
         return "   <!doctype html> 
@@ -44,8 +52,8 @@ class Controller{
 
     private function store(Model $model){
         if(isset($_FILES["image"])){
-            if(isset($model->image) && file_exists("./".$model->image)){
-                unlink("./".$model->image);
+            if(isset($model->image) && file_exists($model->image)){
+                unlink($model->image);
             }
             $file_tmp =$_FILES['image']['tmp_name'];
             $file_real = "images/".$_FILES['image']['name'];
@@ -57,7 +65,7 @@ class Controller{
         $model->gender = $_POST["gender"];
         if(!isset($model->id)){
             $model->id = $this->getNextId();
-            $_SESSION["items"][] = $model;
+            $_SESSION["items"][] = serialize($model);
         }
         return "success";
     }
@@ -65,7 +73,7 @@ class Controller{
     private function getNextId():int{
         $i = 0;
         foreach($_SESSION["items"] as $item){
-            if($item->id > $i){
+            if(unserialize($item)->id > $i){
                 $i = $item->id;
             }
         }

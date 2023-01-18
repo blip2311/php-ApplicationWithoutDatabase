@@ -56,10 +56,67 @@ let createTableBody = items =>{
 };
 
 let createTableRow = item =>{
-
+    let tr = document.createElement("tr");
+    tr.appendChild(getTableTextCell(item.id));
+    tr.appendChild(getTableTextCell(item.name));
+    tr.appendChild(getImageData(item.image));
+    tr.appendChild(getTableTextCell(item.address));
+    tr.appendChild(getTableTextCell(item.gender));
+    tr.appendChild(getButton("edit/"+item.id, "Edit"))
+    tr.appendChild(getButton("show/"+item.id, "View"))
+    tr.appendChild(getButton("delete/"+item.id, "Delete"))
+    return tr;
 };
 
+let getButton = (url, name)=>{
+    let td = document.createElement("td");
+    let button = document.createElement("button");
+    button.innerText = name;
+    button.dataset.url = url;
+    td.appendChild(button);
+    switch(name){
+        case "Edit":
+            button.addEventListener("click", editButtonClicked);
+            break;
+        case "View":
+            button.addEventListener("click", viewButtonClicked);
+            break;
+        case "Delete":
+            button.addEventListener("click", deleteButtonClicked);
+            break;
+    }
+    return td;
+};
 
+let editButtonClicked = e =>{
+    fetch(e.currentTarget.dataset.url, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      .then(response =>response.json())
+      .then(jsonData => createFormPage(jsonData, true));
+};
+
+let viewButtonClicked = e =>{
+    fetch(e.currentTarget.dataset.url, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      .then(response =>response.json())
+      .then(jsonData => createForm(jsonData, false));
+};
+
+let deleteButtonClicked = e =>{};
+
+let getImageData = url =>{
+    let td = document.createElement("td");
+    let image = document.createElement("img");
+    image.src = url;
+    td.appendChild(image);
+    return td;
+};
 
 let createEmptyTableRow = () =>{
     let tr = document.createElement("tr");
